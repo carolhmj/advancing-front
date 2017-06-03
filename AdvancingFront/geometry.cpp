@@ -6,11 +6,14 @@ using namespace Geometry;
 using std::cout;
 using std::endl;
 
+Vertex::Vertex(size_t _id, glm::vec3 _position) : id(id), position(position) { }
+
 Geometry::Vertex::Vertex(size_t id, glm::vec3 position, Geometry::WEdge* iedge) : id(id), position(position), iedge(iedge) {}
 
 bool WEdge::shouldRemove()
 {
-    return (visits == 1 && type == WEdgeType::BORDER) || (visits == 2 && (type == WEdgeType::INTERNAL || WEdgeType == RESTRICTION));
+    //Caso a aresta de borda seja visitada 1 vez, ou a aresta interna ou de restrição seja visitada 2 vezes
+    return (visits == 1 && type == WEdgeType::BORDER) || (visits == 2 && (type == WEdgeType::INTERNAL || type == WEdgeType::RESTRICTION));
 }
 
 Geometry::WEdge::WEdge(size_t id) : id(id) {}
@@ -20,6 +23,11 @@ Geometry::WEdge::WEdge(size_t id, Vertex* vstart, Vertex* vend, Loop* cwloop, Lo
 Geometry::Loop::Loop(size_t id, WEdge* iedge) : id(id), iedge(iedge) {}
 
 std::vector<Geometry::WEdge*> Geometry::Vertex::adjedge() {
+
+    if (iedge == nullptr) {
+        return std::vector<Geometry::WEdge*>();
+    }
+
     WEdge* curredge = iedge;
     std::vector<WEdge*> adjedgev;
 
@@ -36,6 +44,8 @@ std::vector<Geometry::WEdge*> Geometry::Vertex::adjedge() {
 
     return adjedgev;
 }
+
+//TODO considerar casos que a aresta incidente é nula
 std::vector<Geometry::Vertex*> Geometry::Vertex::adjvertex() {
     WEdge* curredge = iedge;
     std::vector<Vertex*> adjvertexv;

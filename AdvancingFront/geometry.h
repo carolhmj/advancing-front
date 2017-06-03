@@ -15,7 +15,8 @@ struct Vertex {
     //Position
     glm::vec3 position;
     //Incident edge
-    WEdge *iedge;
+    WEdge *iedge = nullptr;
+    Vertex(size_t _id, glm::vec3 _position);
     Vertex(size_t _id, glm::vec3 _position, WEdge* _iedge);
 
     //Returns the list of adjacent edges
