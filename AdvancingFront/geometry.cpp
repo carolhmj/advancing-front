@@ -6,9 +6,9 @@ using namespace Geometry;
 using std::cout;
 using std::endl;
 
-Vertex::Vertex(size_t _id, glm::vec3 _position) : id(id), position(position) { }
+Vertex::Vertex(size_t _id, glm::vec2 _position) : id(id), position(position) { }
 
-Geometry::Vertex::Vertex(size_t id, glm::vec3 position, Geometry::WEdge* iedge) : id(id), position(position), iedge(iedge) {}
+Geometry::Vertex::Vertex(size_t id, glm::vec2 position, Geometry::WEdge* iedge) : id(id), position(position), iedge(iedge) {}
 
 bool WEdge::shouldRemove()
 {

@@ -7,7 +7,7 @@ Model::Model()
 
 }
 
-Model::Model(vector<Vertex> _vertices, vector<WEdge> _edges) : vertices(_vertices), edges(_edges) { }
+Model::Model(vector<Vertex *> _vertices, vector<WEdge *> _edges) : vertices(_vertices), edges(_edges) { }
 //TODO colocar iedge nos pontos internos
 void Model::triangulate()
 {
@@ -21,6 +21,11 @@ void Model::triangulate()
 
         //Encontra o próximo ponto
         Vertex *point; // = find_point()
+
+        //Vamos utilizar o critério de delaunay com todos os pontos
+        for (Vertex*& v : vertices) {
+
+        }
 
         //Caso não encontremos um ponto, o modelo não é triangularizável
         if (point == nullptr) {
@@ -37,8 +42,10 @@ void Model::triangulate()
         Vertex *b = currEdge->vend;
 
         //Criar o novo triângulo
-        loops.emplace_front();
-        Loop *newLoop = &loops.front();
+//        loops.emplace_front();
+//        Loop *newLoop = &loops.front();
+        Loop *newLoop = new Loop(loopCounter++, currEdge);
+        loops.push_back(newLoop);
 
         currEdge->ccwloop = newLoop;
 
@@ -76,8 +83,11 @@ vector<WEdge> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vect
     }
     //Não encontramos, então vamos criar a aresta
     if (!found) {
-        edges.emplace_front();
-        WEdge *newEdge = &edges.front();
+//        edges.emplace_front();
+//        WEdge *newEdge = &edges.front();
+
+        WEdge *newEdge = new WEdge(edgeCounter++);
+        edges.push_back(newEdge);
 
         newEdge->vstart = start;
         newEdge->vend = end;
