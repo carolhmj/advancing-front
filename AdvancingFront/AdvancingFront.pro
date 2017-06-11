@@ -16,11 +16,13 @@ QMAKE_CXXFLAGS += -std=c++14
 SOURCES += main.cpp\
         mainwindow.cpp \
     geometry.cpp \
-    model.cpp
+    model.cpp \
+    primitives.cpp
 
 HEADERS  += mainwindow.h \
     geometry.h \
-    model.h
+    model.h \
+    primitives.h
 
 FORMS    += mainwindow.ui
 

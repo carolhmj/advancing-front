@@ -13,11 +13,11 @@ struct Vertex {
     //Identifier
     size_t id;
     //Position
-    glm::vec3 position;
+    glm::vec2 position;
     //Incident edge
     WEdge *iedge = nullptr;
-    Vertex(size_t _id, glm::vec3 _position);
-    Vertex(size_t _id, glm::vec3 _position, WEdge* _iedge);
+    Vertex(size_t _id, glm::vec2 _position);
+    Vertex(size_t _id, glm::vec2 _position, WEdge* _iedge);
 
     //Returns the list of adjacent edges
     std::vector<WEdge*> adjedge();

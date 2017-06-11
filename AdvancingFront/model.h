@@ -19,7 +19,7 @@ public:
     Model(vector<Vertex> _vertices, vector<WEdge> _edges);
     //Aplica a triangulação através do avanço de fronteira
     void triangulate();
-    vector<WEdge> findCreateEdge(WEdge *start, WEdge *end, Loop* loop, vector<WEdge> frontier);
+    vector<WEdge> findCreateEdge(Vertex *start, Vertex *end, Loop* loop, vector<WEdge> frontier);
 private:
     list<Vertex> vertices;
     list<WEdge> edges;
