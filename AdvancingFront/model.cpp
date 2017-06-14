@@ -80,6 +80,17 @@ void Model::triangulate()
         frontier = findCreateEdge(point, a, newLoop, frontier, paEdge);
 
         //Atualizando a estrutura de winged edge delas
+        auto ccwsucc = currEdge->ccwsucc;
+        auto ccwpred = currEdge->ccwpred;
+        auto cwsucc = currEdge->cwsucc;
+        auto cwpred = currEdge->cwpred;
+
+        auto ccwsucc_ccwsucc = ccwsucc->ccwsucc;
+
+        currEdge->ccwpred = paEdge;
+        ccwsucc->ccwsucc = bpEdge;
+
+        ccwsucc_ccwsucc->ccwpred = bpEdge;
     }
 }
 
@@ -95,6 +106,7 @@ vector<WEdge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vec
             loop->iedge = e;
             found = true;
             e->visits++;
+            newEdge = e;
             if (e->shouldRemove()) {
                 frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](WEdge *ec) {return e == ec;} ));
             }
@@ -106,6 +118,7 @@ vector<WEdge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vec
             loop->iedge = e;
             found = true;
             e->visits++;
+            newEdge = e;
             if (e->shouldRemove()) {
                 frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](WEdge *ec) {return e == ec;} ));
             }
