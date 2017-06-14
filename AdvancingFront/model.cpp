@@ -72,12 +72,18 @@ void Model::triangulate()
             frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [currEdge](WEdge *ec) {return currEdge == ec;} ));
         }
 
-        frontier = findCreateEdge(b, point, newLoop, frontier);
-        frontier = findCreateEdge(point, a, newLoop, frontier);
+        //Referências às arestas que serão encontradas/criadas
+        WEdge *bpEdge;
+        WEdge *paEdge;
+
+        frontier = findCreateEdge(b, point, newLoop, frontier, bpEdge);
+        frontier = findCreateEdge(point, a, newLoop, frontier, paEdge);
+
+        //Atualizando a estrutura de winged edge delas
     }
 }
 
-vector<WEdge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vector<WEdge*> frontier)
+vector<WEdge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vector<WEdge*> frontier, WEdge *newEdge)
 {
     vector<WEdge*> adj = start->adjedge();
     bool found = false;
@@ -108,18 +114,12 @@ vector<WEdge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vec
     }
     //Não encontramos, então vamos criar a aresta
     if (!found) {
-        WEdge *newEdge = new WEdge(edgeCounter++);
+        newEdge = new WEdge(edgeCounter++);
         edges.push_back(newEdge);
         cout << "criamos a aresta " << newEdge->id << endl;
 
         newEdge->vstart = start;
         newEdge->vend = end;
-
-        //TODO atualizar as arestas
-//        newEdge->ccwsucc =
-//        newEdge->ccwpred =
-//        newEdge->cwsucc =
-//        newEdge->cwpred =
 
         newEdge->ccwloop = loop;
         loop->iedge = newEdge;
