@@ -1,7 +1,7 @@
 #ifndef GEOMETRY
 #define GEOMETRY
 
-#include "glm/vec3.hpp"
+#include "glm/vec2.hpp"
 #include <vector>
 
 namespace Geometry {
@@ -27,6 +27,7 @@ struct Vertex {
     std::vector<Loop*> adjloop();
 
     // void draw();
+    void print();
 };
 
 struct Loop {

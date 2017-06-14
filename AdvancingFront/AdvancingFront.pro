@@ -11,7 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = AdvancingFront
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -std=c++14
+QMAKE_CXXFLAGS += -std=c++14 -O0
+
+DEFINES += INTERFACE=0
 
 SOURCES += main.cpp\
         mainwindow.cpp \

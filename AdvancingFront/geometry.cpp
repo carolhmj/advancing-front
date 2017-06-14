@@ -6,9 +6,9 @@ using namespace Geometry;
 using std::cout;
 using std::endl;
 
-Vertex::Vertex(size_t _id, glm::vec2 _position) : id(id), position(position) { }
+Vertex::Vertex(size_t _id, glm::vec2 _position) : id(_id), position(_position) { }
 
-Geometry::Vertex::Vertex(size_t id, glm::vec2 position, Geometry::WEdge* iedge) : id(id), position(position), iedge(iedge) {}
+Geometry::Vertex::Vertex(size_t _id, glm::vec2 _position, Geometry::WEdge* _iedge) : id(_id), position(_position), iedge(_iedge) {}
 
 bool WEdge::shouldRemove()
 {
@@ -89,6 +89,16 @@ std::vector<Geometry::Loop*> Geometry::Vertex::adjloop() {
     std::copy(adjloops.begin(), adjloops.end(), std::back_inserter(adjloopv));
 
     return adjloopv;
+}
+
+void Vertex::print()
+{
+    cout << "Vertex " << id << " is incident to edge ";
+    if (iedge != nullptr) {
+        cout << iedge->vstart->id << " " << iedge->vend->id << "\n";
+    } else {
+        cout << "[NULL]\n";
+    }
 }
 
 std::vector<Geometry::WEdge*> Geometry::Loop::adjedge() {

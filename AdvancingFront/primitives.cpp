@@ -9,5 +9,6 @@ float Primitives::distance(glm::vec2 a, glm::vec2 b)
 
 float Primitives::angle(glm::vec2 a, glm::vec2 b)
 {
-    return std::acos(glm::dot(a,b) / (a.length() * b.length()));
+    double x = glm::dot(a,b) / (glm::length(a) * glm::length(b));
+    return std::acos(x);
 }

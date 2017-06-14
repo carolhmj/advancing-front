@@ -2,6 +2,7 @@
 #define MODEL_H
 
 #include "geometry.h"
+#include "primitives.h"
 #include <list>
 
 using namespace Geometry;
@@ -19,11 +20,11 @@ public:
     Model(vector<Vertex*> _vertices, vector<WEdge*> _edges);
     //Aplica a triangulação através do avanço de fronteira
     void triangulate();
-    vector<WEdge> findCreateEdge(Vertex *start, Vertex *end, Loop* loop, vector<WEdge> frontier);
+    vector<WEdge*> findCreateEdge(Vertex *start, Vertex *end, Loop* loop, vector<WEdge*> frontier);
 private:
-    list<Vertex*> vertices;
-    list<WEdge*> edges;
-    list<Loop*> loops;
+    vector<Vertex*> vertices;
+    vector<WEdge*> edges;
+    vector<Loop*> loops;
 
     unsigned int edgeCounter = 0;
     unsigned int loopCounter = 0;
