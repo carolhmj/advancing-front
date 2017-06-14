@@ -5,7 +5,6 @@
 #include "primitives.h"
 #include <list>
 
-using namespace Geometry;
 using std::vector;
 using std::list;
 
@@ -17,17 +16,17 @@ class Model
 public:
     Model();
     //Recebe os pontos (vértices), a fronteira e restrições (edges)
-    Model(vector<Vertex*> _vertices, vector<WEdge*> _edges);
+    Model(vector<Vertex*> _vertices, vector<Edge*> _edges);
     //Aplica a triangulação através do avanço de fronteira
     void triangulate();
-    vector<WEdge*> findCreateEdge(Vertex *start, Vertex *end, Loop* loop, vector<WEdge*> frontier);
+    vector<WEdge*> findCreateEdge(Vertex *start, Vertex *end, Loop* loop, vector<WEdge*> frontier, WEdge *newEdge);
 private:
     vector<Vertex*> vertices;
-    vector<WEdge*> edges;
-    vector<Loop*> loops;
+    vector<Edge*> edges;
+    vector<Face*> faces;
 
     unsigned int edgeCounter = 0;
-    unsigned int loopCounter = 0;
+    unsigned int faceCounter = 0;
 };
 
 #endif // MODEL_H

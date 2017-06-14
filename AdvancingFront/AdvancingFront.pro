@@ -17,14 +17,14 @@ DEFINES += INTERFACE=0
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    geometry.cpp \
     model.cpp \
-    primitives.cpp
+    primitives.cpp \
+    geometry.cpp
 
 HEADERS  += mainwindow.h \
-    geometry.h \
     model.h \
-    primitives.h
+    primitives.h \
+    geometry.h
 
 FORMS    += mainwindow.ui
 

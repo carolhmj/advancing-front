@@ -2,94 +2,29 @@
 #define GEOMETRY
 
 #include "glm/vec2.hpp"
-#include <vector>
-
-namespace Geometry {
-
-struct WEdge;
-struct Loop;
 
 struct Vertex {
-    //Identifier
-    size_t id;
-    //Position
-    glm::vec2 position;
-    //Incident edge
-    WEdge *iedge = nullptr;
-    Vertex(size_t _id, glm::vec2 _position);
-    Vertex(size_t _id, glm::vec2 _position, WEdge* _iedge);
+    unsigned int id;
+    glm::vec2 pos;
 
-    //Returns the list of adjacent edges
-    std::vector<WEdge*> adjedge();
-    //Returns the list of adjacent vertices
-    std::vector<Vertex*> adjvertex();
-    //Returns the list of adjacent faces
-    std::vector<Loop*> adjloop();
-
-    // void draw();
-    void print();
+    Vertex(unsigned int _id, glm::vec2 _pos) : id(_id), pos(_pos) {  }
 };
 
-struct Loop {
-    //Identifier
-    size_t id;
-    //Incident edge
-    WEdge *iedge;
+struct Edge {
+    Vertex *a, *b;
 
-    Loop(size_t _id, WEdge *_iedge);
+    Edge(Vertex *_a, Vertex *_b) : a(_a), b(_b) { }
 
-    //Returns the list of adjacent edges
-    std::vector<WEdge*> adjedge();
-    //Returns the list of adjacent vertices
-    std::vector<Vertex*> adjvertex();
-    //Returns the list of adjacent faces
-    std::vector<Loop*> adjloop();
-
-    // void draw();
+    double value() {
+        return b->pos - a->pos;
+    }
 };
 
-enum WEdgeType {
-    BORDER,
-    RESTRICTION,
-    INTERNAL
+struct Face {
+    Vertex *a, *b, *c;
+
+    Face(Vertex *_a, Vertex *_b, Vertex *_c) : a(_a), b(_b), c(_c) {}
 };
-
-struct WEdge {
-    //Identifier
-    size_t id;
-    //Start and end vertices
-    Vertex *vstart, *vend;
-    //Clockwise and Counterclockwise faces
-    Loop *cwloop, *ccwloop;
-    //Clockwise predecessor and successor edges
-    WEdge *cwpred, *cwsucc;
-    //Counterclockwise predecessor and successor edges
-    WEdge *ccwpred, *ccwsucc;
-    //É borda, restrição ou interno?
-    WEdgeType type;
-    //Número de vezes que foi visitado
-    unsigned int visits = 0;
-    //Checa se ele deve ser removido
-    bool shouldRemove();
-
-    //Initialize only with id, fill other info later
-    WEdge(size_t _id);
-    //Initialize with all info
-    WEdge(size_t id,
-          Vertex* vstart, Vertex* vend,
-          Loop* cwloop, Loop* ccwloop,
-          WEdge* cwpred, WEdge* cwsucc,
-          WEdge* ccwpred, WEdge* ccwsucc);
-
-    //Returns the list of adjacent edges
-    std::vector<WEdge*> adjedge();
-    //Returns the list of adjacent vertices
-    std::vector<Vertex*> adjvertex();
-    //Returns the list of adjacent faces
-    std::vector<Loop*> adjloop();
-
-    // void draw();
-};
-}
 
 #endif // GEOMETRY
+

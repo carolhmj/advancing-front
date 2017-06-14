@@ -10,23 +10,26 @@ Model::Model()
 
 }
 
-Model::Model(vector<Vertex *> _vertices, vector<WEdge *> _edges) : vertices(_vertices), edges(_edges) { }
+Model::Model(vector<Vertex *> _vertices, vector<Edge *> _edges) : vertices(_vertices), edges(_edges) {
+    edgeCounter = _edges.size() + 1;
+    faceCounter = 1;
+}
 
 //TODO colocar iedge nos pontos internos
 void Model::triangulate()
 {
     //Iniciamos com a fronteira recebendo a borda e as restrições
-    vector<WEdge*> frontier = edges;
+    vector<Edge*> frontier = edges;
 
     //Enquanto a fronteira não está vazia
     while (!frontier.empty()) {
         //Pega a próxima aresta a ser analisada
-        WEdge *currEdge = frontier.front();
+        Edge *currEdge = frontier.front();
 
         cout << "curr edge: " << currEdge->id << endl;
 
-        Vertex *a = currEdge->vstart;
-        Vertex *b = currEdge->vend;
+        Vertex *a = currEdge->a;
+        Vertex *b = currEdge->b;
 
         cout << "a: " << a->id << " b: " << b->id << endl;
 
@@ -39,7 +42,7 @@ void Model::triangulate()
         for (Vertex*& v : vertices) {
             if (v != a && v != b) {
                 cout << "examining vertex: " << v->id << endl;
-                float angle = Primitives::angle(a->position - v->position, b->position - v->position);
+                float angle = Primitives::angle(a->pos - v->pos, b->pos - v->pos);
                 if (angle > maxAngle) {
                     point = v;
                     maxAngle = angle;
@@ -60,76 +63,80 @@ void Model::triangulate()
          */
 
         //Criar o novo triângulo
-        Loop *newLoop = new Loop(loopCounter++, currEdge);
-        loops.push_back(newLoop);
+        Face *newFace = new Face(currEdge->b, point, currEdge->a);
+        faces.push_back(newFace);
 
-        cout << "criou o loop " << newLoop->id << endl;
-
-        currEdge->ccwloop = newLoop;
         currEdge->visits++;
+
         if (currEdge->shouldRemove()) {
             cout << "remove a aresta " << currEdge->id << "da fronteira\n";
-            frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [currEdge](WEdge *ec) {return currEdge == ec;} ));
+            frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [currEdge](Edge *ec) {return currEdge == ec;} ));
         }
 
         //Referências às arestas que serão encontradas/criadas
-        WEdge *bpEdge;
-        WEdge *paEdge;
+        Edge *bpEdge;
+        Edge *paEdge;
 
         frontier = findCreateEdge(b, point, newLoop, frontier, bpEdge);
         frontier = findCreateEdge(point, a, newLoop, frontier, paEdge);
 
-        //Atualizando a estrutura de winged edge delas
     }
 }
 
-vector<WEdge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vector<WEdge*> frontier, WEdge *newEdge)
+vector<Edge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vector<Edge*> frontier, Edge *newEdge)
 {
-    vector<WEdge*> adj = start->adjedge();
+    vector<Edge*> adj = findAdjEdges(start, frontier);
     bool found = false;
-    for (WEdge*& e : adj) {
+    for (Edge*& e : adj) {
         //Caso na direção que queremos
-        if (e->vstart == start && e->vend == end) {
+        if (e->a == start && e->b == end) {
             cout << "Encontramos a aresta " << e->id << endl;
-            e->ccwloop = loop;
-            loop->iedge = e;
             found = true;
             e->visits++;
             if (e->shouldRemove()) {
-                frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](WEdge *ec) {return e == ec;} ));
+                frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](Edge *ec) {return e == ec;} ));
             }
         }
         //Caso na direção oposta
-        else if (e->vend == start && e->vstart == end) {
+        else if (e->b == start && e->a == end) {
             cout << "encontramos a aresta " << e->id << endl;
-            e->cwloop = loop;
-            loop->iedge = e;
             found = true;
             e->visits++;
             if (e->shouldRemove()) {
-                frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](WEdge *ec) {return e == ec;} ));
+                frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](Edge *ec) {return e == ec;} ));
             }
         }
 
     }
     //Não encontramos, então vamos criar a aresta
     if (!found) {
-        newEdge = new WEdge(edgeCounter++);
+        newEdge = new Edge(edgeCounter++);
         edges.push_back(newEdge);
         cout << "criamos a aresta " << newEdge->id << endl;
 
-        newEdge->vstart = start;
-        newEdge->vend = end;
+        newEdge->a = start;
+        newEdge->b = end;
 
-        newEdge->ccwloop = loop;
-        loop->iedge = newEdge;
-
-        newEdge->type = WEdgeType::INTERNAL;
+        newEdge->type = EType::INTERNAL;
         newEdge->visits = 1;
 
         frontier.push_back(newEdge);
     }
 
     return frontier;
+}
+
+//Procura as arestas adjacentes no vetor v
+vector<Edge *> Model::findAdjEdges(Vertex *v, vector<Edge *> edges)
+{
+    vector<Edge*> founds;
+
+    for (Edge*& e : edges) {
+        if (e->a == v || e->b == v) {
+            founds.push_back(e);
+        }
+    }
+
+    return founds;
 }
 
