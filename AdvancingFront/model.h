@@ -4,6 +4,7 @@
 #include "geometry.h"
 #include "primitives.h"
 #include <list>
+#include <vector>
 
 using std::vector;
 using std::list;
@@ -19,7 +20,8 @@ public:
     Model(vector<Vertex*> _vertices, vector<Edge*> _edges);
     //Aplica a triangulação através do avanço de fronteira
     void triangulate();
-    vector<WEdge*> findCreateEdge(Vertex *start, Vertex *end, Loop* loop, vector<WEdge*> frontier, WEdge *newEdge);
+    vector<Edge*> findCreateEdge(Vertex *start, Vertex *end, vector<Edge*> frontier, Edge *newEdge);
+    vector<Edge*> findAdjEdges(Vertex *v, vector<Edge*> edges);
 private:
     vector<Vertex*> vertices;
     vector<Edge*> edges;

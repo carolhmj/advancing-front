@@ -23,15 +23,17 @@ void Model::triangulate()
 
     //Enquanto a fronteira não está vazia
     while (!frontier.empty()) {
+        std::cout << "Examining frontier:" << endl;
+        for (Edge*& e : frontier) {
+            cout << e->print() << endl;
+        }
         //Pega a próxima aresta a ser analisada
         Edge *currEdge = frontier.front();
 
-        cout << "curr edge: " << currEdge->id << endl;
+        cout << "curr edge: " << currEdge->print() << endl;
 
         Vertex *a = currEdge->a;
         Vertex *b = currEdge->b;
-
-        cout << "a: " << a->id << " b: " << b->id << endl;
 
         //Encontra o próximo ponto
         Vertex *point = nullptr; // = find_point()
@@ -41,7 +43,6 @@ void Model::triangulate()
         //Vamos utilizar o critério de delaunay (maior ângulo) com todos os pontos
         for (Vertex*& v : vertices) {
             if (v != a && v != b) {
-                cout << "examining vertex: " << v->id << endl;
                 float angle = Primitives::angle(a->pos - v->pos, b->pos - v->pos);
                 if (angle > maxAngle) {
                     point = v;
@@ -69,7 +70,7 @@ void Model::triangulate()
         currEdge->visits++;
 
         if (currEdge->shouldRemove()) {
-            cout << "remove a aresta " << currEdge->id << "da fronteira\n";
+            cout << "remove a aresta " << currEdge->print() << "da fronteira\n";
             frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [currEdge](Edge *ec) {return currEdge == ec;} ));
         }
 
@@ -77,50 +78,55 @@ void Model::triangulate()
         Edge *bpEdge;
         Edge *paEdge;
 
-        frontier = findCreateEdge(b, point, newLoop, frontier, bpEdge);
-        frontier = findCreateEdge(point, a, newLoop, frontier, paEdge);
+        frontier = findCreateEdge(b, point, frontier, bpEdge);
+        frontier = findCreateEdge(point, a, frontier, paEdge);
 
+    }
+
+    cout << "triangulate ended with faces " << endl;
+    for (Face*& f : faces) {
+        cout << f->print() << endl;
     }
 }
 
-vector<Edge*> Model::findCreateEdge(Vertex *start, Vertex *end, Loop *loop, vector<Edge*> frontier, Edge *newEdge)
+vector<Edge*> Model::findCreateEdge(Vertex *start, Vertex *end, vector<Edge*> frontier, Edge *newEdge)
 {
     vector<Edge*> adj = findAdjEdges(start, frontier);
     bool found = false;
     for (Edge*& e : adj) {
         //Caso na direção que queremos
         if (e->a == start && e->b == end) {
-            cout << "Encontramos a aresta " << e->id << endl;
+            cout << "Encontramos a aresta " << e->print() << endl;
             found = true;
             e->visits++;
             if (e->shouldRemove()) {
                 frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](Edge *ec) {return e == ec;} ));
             }
         }
-        //Caso na direção oposta
-        else if (e->b == start && e->a == end) {
-            cout << "encontramos a aresta " << e->id << endl;
-            found = true;
-            e->visits++;
-            if (e->shouldRemove()) {
-                frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](Edge *ec) {return e == ec;} ));
-            }
-        }
+        //Comentando aqui por enquanto, porque se estiver na direção oposta, vamos querer que crie uma aresta nova!
+//        //Caso na direção oposta
+//        else if (e->b == start && e->a == end) {
+//            cout << "encontramos a aresta " << e->print() << endl;
+//            found = true;
+//            e->visits++;
+//            if (e->shouldRemove()) {
+//                frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [e](Edge *ec) {return e == ec;} ));
+//            }
+//        }
 
     }
     //Não encontramos, então vamos criar a aresta
     if (!found) {
-        newEdge = new Edge(edgeCounter++);
+        newEdge = new Edge(start, end);
         edges.push_back(newEdge);
-        cout << "criamos a aresta " << newEdge->id << endl;
-
-        newEdge->a = start;
-        newEdge->b = end;
+        cout << "criamos a aresta " << newEdge->print() << endl;
 
         newEdge->type = EType::INTERNAL;
         newEdge->visits = 1;
 
-        frontier.push_back(newEdge);
+        //Não vou botar na fronteira pq já visitei 1 vez!
+
+//        frontier.push_back(newEdge);
     }
 
     return frontier;
