@@ -36,7 +36,7 @@ struct Edge {
     }
 
     bool shouldRemove() {
-        return (visits == 1 && type == EType::BORDER) || (visits == 1 && type == EType::INTERNAL);
+        return (visits >= 1 && type == EType::BORDER) || (visits >= 1 && type == EType::INTERNAL);
     }
 
     std::string print() {
