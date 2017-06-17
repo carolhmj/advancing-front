@@ -5,6 +5,7 @@
 #include "primitives.h"
 #include <list>
 #include <vector>
+#include <GL/gl.h>
 
 using std::vector;
 using std::list;
@@ -22,6 +23,10 @@ public:
     void triangulate();
     vector<Edge*> findCreateEdge(Vertex *start, Vertex *end, vector<Edge*> frontier, Edge *newEdge);
     vector<Edge*> findAdjEdges(Vertex *v, vector<Edge*> edges);
+
+    //Desenho
+    void draw();
+
 private:
     vector<Vertex*> vertices;
     vector<Edge*> edges;
