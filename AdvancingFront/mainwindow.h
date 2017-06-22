@@ -1,3 +1,4 @@
+void on_triangulate_clicked();
 #if INTERFACE
 
 #ifndef MAINWINDOW_H
@@ -16,7 +17,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+private slots:
+    void on_triangulate_clicked();
 private:
     Ui::MainWindow *ui;
 };

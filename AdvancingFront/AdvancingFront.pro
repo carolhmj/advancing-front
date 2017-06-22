@@ -18,12 +18,14 @@ DEFINES += INTERFACE=1
 SOURCES += main.cpp\
         mainwindow.cpp \
     model.cpp \
-    primitives.cpp
+    primitives.cpp \
+    glwidget.cpp
 
 HEADERS  += mainwindow.h \
     model.h \
     primitives.h \
-    geometry.h
+    geometry.h \
+    glwidget.h
 
 FORMS    += mainwindow.ui
 

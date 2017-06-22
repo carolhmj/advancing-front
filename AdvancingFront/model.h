@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <GL/gl.h>
+#include <string>
 
 using std::vector;
 using std::list;
@@ -23,9 +24,14 @@ public:
     void triangulate();
     vector<Edge*> findCreateEdge(Vertex *start, Vertex *end, vector<Edge*> frontier, Edge *newEdge);
     vector<Edge*> findAdjEdges(Vertex *v, vector<Edge*> edges);
+    bool intersectsFrontier(glm::vec2 edgeA, glm::vec2 edgeB, vector<Edge*> frontier);
 
     //Desenho
     void draw();
+
+    //Utilidades
+    float getMaxCoordValue();
+    std::string print();
 
 private:
     vector<Vertex*> vertices;

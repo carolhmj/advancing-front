@@ -16,3 +16,8 @@ MainWindow::~MainWindow()
 }
 
 #endif
+
+void MainWindow::on_triangulate_clicked()
+{
+    ui->widget->triangulateModel();
+}

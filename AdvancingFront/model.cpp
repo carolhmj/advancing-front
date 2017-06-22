@@ -1,6 +1,7 @@
 #include "model.h"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 using std::cout;
 using std::endl;
@@ -43,7 +44,8 @@ void Model::triangulate()
         //Vamos utilizar o critério de delaunay (maior ângulo) com todos os pontos
         //TODO só checar os pontos à direita da aresta
         for (Vertex*& v : vertices) {
-            if (v != a && v != b && Primitives::isRightTo(currEdge->value(), v->pos - a->pos)) {
+            bool condition = v != a && v != b && Primitives::isRightTo(currEdge->value(), v->pos - a->pos) && !intersectsFrontier(v->pos, a->pos, frontier) && !intersectsFrontier(b->pos, v->pos, frontier);
+            if (condition) {
                 cout << v->id << " right to " << Primitives::isRightTo(currEdge->value(), v->pos - a->pos) << endl;
                 float angle = Primitives::angle(a->pos - v->pos, b->pos - v->pos);
                 if (angle > maxAngle) {
@@ -137,6 +139,17 @@ vector<Edge *> Model::findAdjEdges(Vertex *v, vector<Edge *> edges)
     return founds;
 }
 
+bool Model::intersectsFrontier(glm::vec2 edgeA, glm::vec2 edgeB, vector<Edge *> frontier)
+{
+    for (Edge*& e : frontier) {
+        if (Primitives::intersects(e->a->pos, e->b->pos, edgeA, edgeB)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Model::draw()
 {
     //Desenha os pontos
@@ -153,9 +166,39 @@ void Model::draw()
     glBegin(GL_LINES);
         for (Edge*& e : edges) {
             glVertex2f(e->a->pos.x, e->a->pos.y);
-            glVertex2f(e->b->pos.y, e->b->pos.y);
+            glVertex2f(e->b->pos.x, e->b->pos.y);
         }
     glEnd();
     //Desenha os triângulos
+}
+
+float Model::getMaxCoordValue()
+{
+    float max = std::numeric_limits<float>::lowest();
+    for (Vertex*& v : vertices) {
+        max = (std::abs(v->pos.x) >= max)? std::abs(v->pos.x) : max;
+        max = (std::abs(v->pos.y) >= max)? std::abs(v->pos.y) : max;
+    }
+
+    cout << "max is " << max << endl;
+    return max;
+}
+
+std::string Model::print()
+{
+    std::stringstream ss;
+    ss << "VERTICES =========" << endl;
+    for (Vertex*& v : vertices) {
+        ss << v->print() << endl;
+    }
+    ss << "EDGES ==========" << endl;
+    for (Edge*& e : edges) {
+        ss << e->print() << endl;
+    }
+    ss << "FACES ===========" << endl;
+    for (Face*& f : faces) {
+        ss << f->print() << endl;
+    }
+    return ss.str();
 }
 
