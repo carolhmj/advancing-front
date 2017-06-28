@@ -16,7 +16,6 @@ Model::Model(vector<Vertex *> _vertices, vector<Edge *> _edges) : vertices(_vert
     faceCounter = 1;
 }
 
-//TODO colocar iedge nos pontos internos
 void Model::triangulate()
 {
     //Iniciamos com a fronteira recebendo a borda e as restrições
@@ -71,12 +70,12 @@ void Model::triangulate()
         Face *newFace = new Face(currEdge->a, currEdge->b, point);
         faces.push_back(newFace);
 
-        currEdge->visits++;
+//        currEdge->visits++;
 
-        if (currEdge->shouldRemove()) {
-            cout << "remove a aresta " << currEdge->print() << "da fronteira\n";
+//        if (currEdge->shouldRemove()) {
+//            cout << "remove a aresta " << currEdge->print() << "da fronteira\n";
             frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [currEdge](Edge *ec) {return currEdge == ec;} ));
-        }
+//        }
 
         //Referências às arestas que serão encontradas/criadas
         Edge *bpEdge;

@@ -31,4 +31,5 @@ bool Primitives::intersects(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d)
 float Primitives::cross2d(glm::vec2 a, glm::vec2 b)
 {
     return a.x*b.y - b.x*a.y;
+//    return false;
 }

@@ -7,35 +7,40 @@ using std::endl;
 GLWidget::GLWidget(QWidget *parent) :
     QOpenGLWidget(parent) {
     vector<Vertex*> vv;
-//    vv.push_back(new Vertex(1, {0,2}));
-//    vv.push_back(new Vertex(2, {-4,6}));
-//    vv.push_back(new Vertex(3, {-5,0}));
-//    vv.push_back(new Vertex(4, {-1,1}));
-//    vv.push_back(new Vertex(5, {-3,-3}));
-//    vv.push_back(new Vertex(6, {0,-4}));
-//    vv.push_back(new Vertex(7, {5,-2}));
-//    vv.push_back(new Vertex(8, {9,0}));
-//    vv.push_back(new Vertex(9, {4,5}));
-//    vv.push_back(new Vertex(10, {8,3}));
+    vv.push_back(new Vertex(1, {0,8}));
+    vv.push_back(new Vertex(2, {-4,6}));
+    vv.push_back(new Vertex(3, {-5,0}));
+    vv.push_back(new Vertex(4, {-1,1}));
+    vv.push_back(new Vertex(5, {-3,-3}));
+    vv.push_back(new Vertex(6, {0,-4}));
+    vv.push_back(new Vertex(7, {5,-2}));
+    vv.push_back(new Vertex(8, {9,0}));
+    vv.push_back(new Vertex(9, {4,5}));
+    vv.push_back(new Vertex(10, {8,3}));
 
-    vv.push_back(new Vertex(1, {0,0}));
-    vv.push_back(new Vertex(2, {0,1}));
-    vv.push_back(new Vertex(3, {1,1}));
-    vv.push_back(new Vertex(4, {1,0}));
+//    vv.push_back(new Vertex(1, {0,0}));
+//    vv.push_back(new Vertex(2, {0,1}));
+//    vv.push_back(new Vertex(3, {1,1}));
+//    vv.push_back(new Vertex(4, {1,0}));
 
     vector<Edge*> ve;
-//    ve.push_back(new Edge(vv[0], vv[9]));
-//    ve.push_back(new Edge(vv[9], vv[7]));
-//    ve.push_back(new Edge(vv[7], vv[6]));
-//    ve.push_back(new Edge(vv[6], vv[5]));
-//    ve.push_back(new Edge(vv[5], vv[4]));
-//    ve.push_back(new Edge(vv[4], vv[2]));
-//    ve.push_back(new Edge(vv[2], vv[1]));
-//    ve.push_back(new Edge(vv[1], vv[0]));
-    ve.push_back(new Edge(vv[0],vv[1]));
-    ve.push_back(new Edge(vv[1],vv[2]));
-    ve.push_back(new Edge(vv[2],vv[3]));
-    ve.push_back(new Edge(vv[3],vv[0]));
+    ve.push_back(new Edge(vv[0], vv[9]));
+    ve.push_back(new Edge(vv[9], vv[7]));
+    ve.push_back(new Edge(vv[7], vv[6]));
+    ve.push_back(new Edge(vv[6], vv[5]));
+    ve.push_back(new Edge(vv[5], vv[4]));
+    ve.push_back(new Edge(vv[4], vv[2]));
+    ve.push_back(new Edge(vv[2], vv[1]));
+    ve.push_back(new Edge(vv[1], vv[0]));
+    //Restrição
+    ve.push_back(new Edge(vv[8], vv[5]));
+    ve.push_back(new Edge(vv[5], vv[8]));
+    ve.push_back(new Edge(vv[1], vv[4]));
+    ve.push_back(new Edge(vv[4], vv[1]));
+//    ve.push_back(new Edge(vv[0],vv[1]));
+//    ve.push_back(new Edge(vv[1],vv[2]));
+//    ve.push_back(new Edge(vv[2],vv[3]));
+//    ve.push_back(new Edge(vv[3],vv[0]));
 
     model = new Model(vv, ve);
     cout << model->print() << endl;
@@ -70,10 +75,10 @@ void GLWidget::paintGL() {
 
     if (model) model->draw();
 
-    glBegin(GL_LINES);
-    glVertex2f(0,0);
-    glVertex2f(0,1);
-    glEnd();
+//    glBegin(GL_LINES);
+//    glVertex2f(0,0);
+//    glVertex2f(0,1);
+//    glEnd();
 }
 
 void GLWidget::adjustOrtho()

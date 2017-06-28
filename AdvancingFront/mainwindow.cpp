@@ -15,9 +15,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-#endif
-
 void MainWindow::on_triangulate_clicked()
 {
     ui->widget->triangulateModel();
 }
+
+#endif
