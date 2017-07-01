@@ -1,5 +1,8 @@
 #include "glwidget.h"
 #include <iostream>
+#include <QTextStream>
+#include <QFile>
+#include <QFileDialog>
 
 using std::cout;
 using std::endl;
@@ -42,14 +45,17 @@ GLWidget::GLWidget(QWidget *parent) :
 //    ve.push_back(new Edge(vv[2],vv[3]));
 //    ve.push_back(new Edge(vv[3],vv[0]));
 
-    model = new Model(vv, ve);
+    Model *model = new Model(vv, ve);
     cout << model->print() << endl;
+    models.push_back(model);
     adjustOrtho();
 }
 
 void GLWidget::triangulateModel()
 {
-    model->triangulate();
+    for (Model*& model : models) {
+        model->triangulate();
+    }
     update();
 }
 
@@ -73,22 +79,127 @@ void GLWidget::paintGL() {
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(projection));
 
-    if (model) model->draw();
-
-//    glBegin(GL_LINES);
-//    glVertex2f(0,0);
-//    glVertex2f(0,1);
-//    glEnd();
+    for (Model*& model : models) {
+        model->draw();
+    }
 }
 
 void GLWidget::adjustOrtho()
 {
-    if (model) {
-        float max = model->getMaxCoordValue();
-        float border = 0.1*max;
-        float maxTotal = max + border;
-        projection = glm::ortho(-maxTotal, maxTotal, -maxTotal, maxTotal);
-    } else {
+    if (models.empty()) {
         projection = glm::ortho(-1,1,-1,1);
+    } else {
+        float maxCoord = std::numeric_limits<float>::lowest();
+        for (Model*& model : models) {
+            float modelMax = model->getMaxCoordValue();
+            maxCoord = (modelMax >= maxCoord) ? modelMax : maxCoord;
+        }
+        float border = 0.1*maxCoord;
+        float maxTotal = maxCoord + border;
+        projection = glm::ortho(-maxTotal, maxTotal, -maxTotal, maxTotal);
     }
+}
+
+void GLWidget::openArchive() {
+    models.clear();
+    std::vector<std::vector<Vertex*>> verticesVector;
+    std::vector<std::vector<Edge*>> edgesVector;
+
+    //First, we'll open the vertex file
+    QString fileNameV = QFileDialog::getOpenFileName(this,
+        tr("Open Vertex File"), "/home", tr(""));
+
+    std::cout << "opening vertex file: " << fileNameV.toStdString() << "\n";
+
+    QFile fileV(fileNameV);
+    if (!fileV.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream inV(&fileV);
+
+    int numGroupsV = inV.readLine().toInt();
+
+    try {
+
+        //Lê cada grupo
+        for (int i = 0; i < numGroupsV; i++) {
+            std::vector<Vertex*> vertices;
+            int numPoints = inV.readLine().toInt();
+            for (int j = 0; j < numPoints; j++) {
+                float id, x, y, z;
+                QString point = inV.readLine();
+                QStringList info = point.split(" ");
+                id = info[0].toInt();
+                x = info[1].toFloat();
+                y = info[2].toFloat();
+                z = info[3].toFloat();
+                std::cout << "Read vertex " << id << ": " << x << " " << y << " " << z << "\n";
+                std::flush(std::cout);
+                vertices.push_back(new Vertex(id, {x,y}));
+            }
+            verticesVector.push_back(vertices);
+        }
+
+    } catch (std::exception& e) {
+        std::cout << "Erro na leitura de arquivo!\n";
+    }
+
+    fileV.close();
+
+    //Then, we'll read the edges
+    QString fileNameE = QFileDialog::getOpenFileName(this,
+        tr("Open Edge File"), "/home", tr(""));
+
+    std::cout << "opening edge file: " << fileNameE.toStdString() << "\n";
+
+    QFile fileE(fileNameE);
+    if (!fileE.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream inE(&fileE);
+
+    int numGroupsE = inE.readLine().toInt();
+
+    try {
+        for (int i = 0; i < numGroupsE; i++) {
+            //if i = ... (controle de grupos)
+            EType edgesType = EType::BORDER;
+            std::vector<Edge*> edges;
+            int numEdges = inE.readLine().toInt();
+            for (int j = 0; j < numEdges; j++) {
+                float idA, idB;
+                QString edge = inE.readLine();
+                QStringList info = edge.split(" ");
+                idA = info[0].toInt();
+                idB = info[1].toInt();
+                Vertex *vA, *vB;
+                vA = findVertexIdInVector(idA, verticesVector[i]);
+                vB = findVertexIdInVector(idB, verticesVector[i]);
+                edges.push_back(new Edge(vA, vB, edgesType));
+            }
+            edgesVector.push_back(edges);
+        }
+    } catch (std::exception& e) {
+        std::cout << "Erro na leitura de arquivo!\n";
+    }
+
+    for (int i = 0; i < verticesVector.size(); i++) {
+        Model *newModel = new Model(verticesVector[i], edgesVector[i]);
+        models.push_back(newModel);
+    }
+
+    adjustOrtho();
+    update();
+}
+
+Vertex *GLWidget::findVertexIdInVector(unsigned int id, std::vector<Vertex *> vector)
+{
+    for (Vertex*& v : vector) {
+        if (v->id == id) {
+            return v;
+        }
+    }
+    return nullptr;
 }

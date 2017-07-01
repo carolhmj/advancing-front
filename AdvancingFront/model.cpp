@@ -153,7 +153,7 @@ void Model::draw()
 {
     //Desenha os pontos
     glColor3f(1,0,0);
-    glPointSize(5);
+    glPointSize(3);
     glBegin(GL_POINTS);
         for (Vertex*& v : vertices) {
             glVertex2f(v->pos.x, v->pos.y);

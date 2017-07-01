@@ -21,3 +21,8 @@ void MainWindow::on_triangulate_clicked()
 }
 
 #endif
+
+void MainWindow::on_actionOpen_triggered()
+{
+    ui->widget->openArchive();
+}

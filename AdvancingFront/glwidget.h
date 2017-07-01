@@ -17,9 +17,10 @@ class GLWidget : public QOpenGLWidget
 public:
     explicit GLWidget(QWidget *parent = 0);
     void triangulateModel();
+    void openArchive();
 
 private:
-    Model *model = nullptr;
+    std::vector<Model*> models;
     Camera camera;
     glm::mat4 view;
     glm::mat4 projection;
@@ -28,6 +29,7 @@ private:
     void resizeGL(int w, int h);
     void paintGL();
     void adjustOrtho();
+    Vertex* findVertexIdInVector(unsigned int id, std::vector<Vertex*> vector);
 };
 
 #endif // GLWIDGET_H

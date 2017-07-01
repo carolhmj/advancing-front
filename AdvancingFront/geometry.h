@@ -15,6 +15,7 @@ struct Vertex {
     unsigned int id;
     glm::vec2 pos;
 
+    Vertex() {}
     Vertex(unsigned int _id, glm::vec2 _pos) : id(_id), pos(_pos) {  }
 
     std::string print() {
@@ -30,6 +31,8 @@ struct Edge {
     EType type;
 
     Edge(Vertex *_a, Vertex *_b) : a(_a), b(_b) { }
+
+    Edge(Vertex *_a, Vertex *_b, EType _type) : a(_a), b(_b), type(_type) { }
 
     glm::vec2 value() {
         return b->pos - a->pos;

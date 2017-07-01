@@ -1,3 +1,4 @@
+void on_actionOpen_triggered();
 void on_triangulate_clicked();
 #if INTERFACE
 
@@ -19,6 +20,7 @@ public:
     ~MainWindow();
 private slots:
     void on_triangulate_clicked();
+    void on_actionOpen_triggered();
 private:
     Ui::MainWindow *ui;
 };
