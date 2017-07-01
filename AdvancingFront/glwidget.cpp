@@ -165,7 +165,6 @@ void GLWidget::openArchive() {
     try {
         for (int i = 0; i < numGroupsE; i++) {
             //if i = ... (controle de grupos)
-            EType edgesType = EType::BORDER;
             std::vector<Edge*> edges;
             int numEdges = inE.readLine().toInt();
             for (int j = 0; j < numEdges; j++) {
@@ -177,7 +176,7 @@ void GLWidget::openArchive() {
                 Vertex *vA, *vB;
                 vA = findVertexIdInVector(idA, verticesVector[i]);
                 vB = findVertexIdInVector(idB, verticesVector[i]);
-                edges.push_back(new Edge(vA, vB, edgesType));
+                edges.push_back(new Edge(vA, vB));
             }
             edgesVector.push_back(edges);
         }

@@ -70,12 +70,7 @@ void Model::triangulate()
         Face *newFace = new Face(currEdge->a, currEdge->b, point);
         faces.push_back(newFace);
 
-//        currEdge->visits++;
-
-//        if (currEdge->shouldRemove()) {
-//            cout << "remove a aresta " << currEdge->print() << "da fronteira\n";
-            frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [currEdge](Edge *ec) {return currEdge == ec;} ));
-//        }
+        frontier.erase(std::remove_if(frontier.begin(), frontier.end(), [currEdge](Edge *ec) {return currEdge == ec;} ));
 
         //Referências às arestas que serão encontradas/criadas
         Edge *bpEdge;
