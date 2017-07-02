@@ -30,16 +30,18 @@ public:
     void draw();
 
     //Utilidades
-    float getMaxCoordValue();
+    float getAbsMaxXCoordValue();
+    float getMaxXCoordValue();
+    float getMinXCoordValue();
+    float getAbsMaxYCoordValue();
+    float getMaxYCoordValue();
+    float getMinYCoordValue();
     std::string print();
 
 private:
     vector<Vertex*> vertices;
     vector<Edge*> edges;
     vector<Face*> faces;
-
-    unsigned int edgeCounter = 0;
-    unsigned int faceCounter = 0;
 };
 
 #endif // MODEL_H

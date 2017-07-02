@@ -13,8 +13,6 @@ Model::Model()
 }
 
 Model::Model(vector<Vertex *> _vertices, vector<Edge *> _edges) : vertices(_vertices), edges(_edges) {
-    edgeCounter = _edges.size() + 1;
-    faceCounter = 1;
 }
 
 void Model::triangulate()
@@ -31,7 +29,7 @@ void Model::triangulate()
         //Pega a próxima aresta a ser analisada
         Edge *currEdge = frontier.front();
 
-        cout << "curr edge: " << currEdge->print() << endl;
+//        cout << "curr edge: " << currEdge->print() << endl;
 
         Vertex *a = currEdge->a;
         Vertex *b = currEdge->b;
@@ -173,16 +171,64 @@ void Model::draw()
     //Desenha os triângulos
 }
 
-float Model::getMaxCoordValue()
+float Model::getAbsMaxXCoordValue()
 {
     float max = std::numeric_limits<float>::lowest();
     for (Vertex*& v : vertices) {
         max = (std::abs(v->pos.x) >= max)? std::abs(v->pos.x) : max;
+    }
+
+    return max;
+}
+
+float Model::getMaxXCoordValue()
+{
+    float max = std::numeric_limits<float>::lowest();
+    for (Vertex*& v : vertices) {
+        max = (v->pos.x >= max)? v->pos.x : max;
+    }
+
+    return max;
+}
+
+float Model::getMinXCoordValue()
+{
+    float min = std::numeric_limits<float>::max();
+    for (Vertex*& v : vertices) {
+        min = (v->pos.x <= min)? v->pos.x : min;
+    }
+
+    return min;
+}
+
+float Model::getAbsMaxYCoordValue()
+{
+    float max = std::numeric_limits<float>::lowest();
+    for (Vertex*& v : vertices) {
         max = (std::abs(v->pos.y) >= max)? std::abs(v->pos.y) : max;
     }
 
-    cout << "max is " << max << endl;
     return max;
+}
+
+float Model::getMaxYCoordValue()
+{
+    float max = std::numeric_limits<float>::lowest();
+    for (Vertex*& v : vertices) {
+        max = (v->pos.y >= max)? v->pos.y : max;
+    }
+
+    return max;
+}
+
+float Model::getMinYCoordValue()
+{
+    float min = std::numeric_limits<float>::max();
+    for (Vertex*& v : vertices) {
+        min = (v->pos.y <= min)? v->pos.y : min;
+    }
+
+    return min;
 }
 
 std::string Model::print()

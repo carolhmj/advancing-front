@@ -15,6 +15,8 @@ QMAKE_CXXFLAGS += -std=c++14 -O0
 
 DEFINES += INTERFACE=1
 
+LIBS += -lGLU -lGL
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     model.cpp \

@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QFileDialog>
+#include <GL/glu.h>
 
 using std::cout;
 using std::endl;
@@ -23,7 +24,6 @@ void GLWidget::triangulateModel()
 void GLWidget::initializeGL()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-//    view = glm::lookAt(camera.eye, camera.at, camera.up);
 }
 
 void GLWidget::resizeGL(int w, int h) {
@@ -36,7 +36,6 @@ void GLWidget::resizeGL(int w, int h) {
 void GLWidget::paintGL() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
-//    view = glm::lookAt(camera.eye, camera.at, camera.up);
     glLoadMatrixf(glm::value_ptr(view));
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(projection));
@@ -51,14 +50,25 @@ void GLWidget::adjustOrtho()
     if (models.empty()) {
         projection = glm::ortho(-1,1,-1,1);
     } else {
-        float maxCoord = std::numeric_limits<float>::lowest();
+        float maxCoordX = std::numeric_limits<float>::lowest();
+        float minCoordX = std::numeric_limits<float>::max();
+        float maxCoordY = std::numeric_limits<float>::lowest();
+        float minCoordY = std::numeric_limits<float>::max();
         for (Model*& model : models) {
-            float modelMax = model->getMaxCoordValue();
-            maxCoord = (modelMax >= maxCoord) ? modelMax : maxCoord;
+            float modelMaxX = model->getMaxXCoordValue();
+            float modelMinX = model->getMinXCoordValue();
+            maxCoordX = (modelMaxX >= maxCoordX) ? modelMaxX : maxCoordX;
+            minCoordX = (modelMinX <= minCoordX) ? modelMinX : minCoordX;
+            float modelMaxY = model->getMaxYCoordValue();
+            float modelMinY = model->getMinYCoordValue();
+            maxCoordY = (modelMaxY >= maxCoordY) ? modelMaxY : maxCoordY;
+            minCoordY = (modelMinY <= minCoordY) ? modelMinY : minCoordY;
         }
-        float border = 0.1*maxCoord;
-        float maxTotal = maxCoord + border;
-        projection = glm::ortho(-maxTotal, maxTotal, -maxTotal, maxTotal);
+
+        float xDiff = maxCoordX - minCoordX;
+        float yDiff = maxCoordY - minCoordY;
+
+        projection = glm::ortho(minCoordX - 0.1*xDiff, maxCoordX + 0.1*xDiff, minCoordY - 0.1*yDiff, maxCoordY + 0.1*yDiff);
     }
 }
 
@@ -96,7 +106,7 @@ void GLWidget::openArchive() {
                 x = info[1].toFloat();
                 y = info[2].toFloat();
                 z = info[3].toFloat();
-                std::cout << "Read vertex " << id << ": " << x << " " << y << " " << z << "\n";
+//                std::cout << "Read vertex " << id << ": " << x << " " << y << " " << z << "\n";
                 std::flush(std::cout);
                 vertices.push_back(new Vertex(id, {x,y}));
             }
@@ -148,7 +158,7 @@ void GLWidget::openArchive() {
 
     for (int i = 0; i < verticesVector.size(); i++) {
         Model *newModel = new Model(verticesVector[i], edgesVector[i]);
-        std::cout << newModel->print();
+//        std::cout << newModel->print();
         models.push_back(newModel);
     }
 
@@ -164,32 +174,4 @@ Vertex *GLWidget::findVertexIdInVector(unsigned int id, std::vector<Vertex *> ve
         }
     }
     return nullptr;
-}
-
-void GLWidget::keyPressEvent(QKeyEvent *event) {
-    glm::vec3 posAdd;
-    switch (event->key()) {
-    case Qt::Key_Up:
-        posAdd = glm::vec3(0,1,0);
-        break;
-    case Qt::Key_Down:
-        posAdd = glm::vec3(0,-1,0);
-        break;
-    case Qt::Key_Left:
-        posAdd = glm::vec3(-1,0,0);
-        break;
-    case Qt::Key_Right:
-        posAdd = glm::vec3(1,0,0);
-        break;
-    case Qt::Key_Plus:
-        posAdd = glm::vec3(0,0,-1);
-        break;
-    case Qt::Key_Minus:
-        posAdd = glm::vec3(0,0,1);
-        break;
-    }
-    camera.eye += posAdd;
-    std::cout << "camera eye: " << glm::to_string(camera.eye) << "\n";
-    std::flush(std::cout);
-    update();
 }
