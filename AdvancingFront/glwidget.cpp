@@ -9,51 +9,12 @@ using std::endl;
 
 GLWidget::GLWidget(QWidget *parent) :
     QOpenGLWidget(parent) {
-    vector<Vertex*> vv;
-    vv.push_back(new Vertex(1, {0,8}));
-    vv.push_back(new Vertex(2, {-4,6}));
-    vv.push_back(new Vertex(3, {-5,0}));
-    vv.push_back(new Vertex(4, {-1,1}));
-    vv.push_back(new Vertex(5, {-3,-3}));
-    vv.push_back(new Vertex(6, {0,-4}));
-    vv.push_back(new Vertex(7, {5,-2}));
-    vv.push_back(new Vertex(8, {9,0}));
-    vv.push_back(new Vertex(9, {4,5}));
-    vv.push_back(new Vertex(10, {8,3}));
-
-//    vv.push_back(new Vertex(1, {0,0}));
-//    vv.push_back(new Vertex(2, {0,1}));
-//    vv.push_back(new Vertex(3, {1,1}));
-//    vv.push_back(new Vertex(4, {1,0}));
-
-    vector<Edge*> ve;
-    ve.push_back(new Edge(vv[0], vv[9]));
-    ve.push_back(new Edge(vv[9], vv[7]));
-    ve.push_back(new Edge(vv[7], vv[6]));
-    ve.push_back(new Edge(vv[6], vv[5]));
-    ve.push_back(new Edge(vv[5], vv[4]));
-    ve.push_back(new Edge(vv[4], vv[2]));
-    ve.push_back(new Edge(vv[2], vv[1]));
-    ve.push_back(new Edge(vv[1], vv[0]));
-    //Restrição
-    ve.push_back(new Edge(vv[8], vv[5]));
-    ve.push_back(new Edge(vv[5], vv[8]));
-    ve.push_back(new Edge(vv[1], vv[4]));
-    ve.push_back(new Edge(vv[4], vv[1]));
-//    ve.push_back(new Edge(vv[0],vv[1]));
-//    ve.push_back(new Edge(vv[1],vv[2]));
-//    ve.push_back(new Edge(vv[2],vv[3]));
-//    ve.push_back(new Edge(vv[3],vv[0]));
-
-    Model *model = new Model(vv, ve);
-    cout << model->print() << endl;
-    models.push_back(model);
-    adjustOrtho();
 }
 
 void GLWidget::triangulateModel()
 {
     for (Model*& model : models) {
+        std::cout << "--------------------\n";
         model->triangulate();
     }
     update();
@@ -75,6 +36,7 @@ void GLWidget::resizeGL(int w, int h) {
 void GLWidget::paintGL() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
+//    view = glm::lookAt(camera.eye, camera.at, camera.up);
     glLoadMatrixf(glm::value_ptr(view));
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(projection));
@@ -186,6 +148,7 @@ void GLWidget::openArchive() {
 
     for (int i = 0; i < verticesVector.size(); i++) {
         Model *newModel = new Model(verticesVector[i], edgesVector[i]);
+        std::cout << newModel->print();
         models.push_back(newModel);
     }
 
@@ -201,4 +164,32 @@ Vertex *GLWidget::findVertexIdInVector(unsigned int id, std::vector<Vertex *> ve
         }
     }
     return nullptr;
+}
+
+void GLWidget::keyPressEvent(QKeyEvent *event) {
+    glm::vec3 posAdd;
+    switch (event->key()) {
+    case Qt::Key_Up:
+        posAdd = glm::vec3(0,1,0);
+        break;
+    case Qt::Key_Down:
+        posAdd = glm::vec3(0,-1,0);
+        break;
+    case Qt::Key_Left:
+        posAdd = glm::vec3(-1,0,0);
+        break;
+    case Qt::Key_Right:
+        posAdd = glm::vec3(1,0,0);
+        break;
+    case Qt::Key_Plus:
+        posAdd = glm::vec3(0,0,-1);
+        break;
+    case Qt::Key_Minus:
+        posAdd = glm::vec3(0,0,1);
+        break;
+    }
+    camera.eye += posAdd;
+    std::cout << "camera eye: " << glm::to_string(camera.eye) << "\n";
+    std::flush(std::cout);
+    update();
 }

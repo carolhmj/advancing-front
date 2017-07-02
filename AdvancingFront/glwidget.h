@@ -2,13 +2,14 @@
 #define GLWIDGET_H
 
 #include <QOpenGLWidget>
+#include <QKeyEvent>
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "model.h"
 
 struct Camera {
-    glm::vec3 eye = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 at = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec3 eye = glm::vec3(0.0f, 0.0f, 5.0f);
+    glm::vec3 at = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 };
 
@@ -30,6 +31,9 @@ private:
     void paintGL();
     void adjustOrtho();
     Vertex* findVertexIdInVector(unsigned int id, std::vector<Vertex*> vector);
+
+    void keyPressEvent(QKeyEvent *event);
+
 };
 
 #endif // GLWIDGET_H

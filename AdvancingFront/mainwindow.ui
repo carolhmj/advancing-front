@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>640</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,11 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="GLWidget" name="widget" native="true"/>
+     <widget class="GLWidget" name="widget" native="true">
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="triangulate">
@@ -32,7 +36,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>640</width>
      <height>23</height>
     </rect>
    </property>
